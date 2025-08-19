@@ -55,8 +55,31 @@ def greedy_cow_transport(cows,limit=10):
     transported on a particular trip and the overall list containing all the
     trips
     """
-    # TODO: Your code here
-    pass
+    trips = []
+    cows_ordered = sorted(cows.keys(), key = lambda x : -cows[x])
+
+    while len(cows_ordered) > 0:
+        trip = []
+        capacity = limit
+        next_cow = cows_ordered[0]
+        next_cow_weight = cows[next_cow]
+        while capacity - next_cow_weight >= 0:
+            capacity -= next_cow_weight
+            trip += [next_cow]
+            cows_ordered = cows_ordered[1:]
+            if len(cows_ordered) == 0:
+                break
+            next_cow = cows_ordered[0]
+            next_cow_weight = cows[next_cow]
+        trips += [trip]
+
+
+
+
+    print(cows)
+    print(cows_ordered)
+
+    return trips
 
 # Problem 3
 def brute_force_cow_transport(cows,limit=10):
@@ -68,13 +91,13 @@ def brute_force_cow_transport(cows,limit=10):
         Use the given get_partitions function in ps1_partition.py to help you!
     2. Select the allocation that minimizes the number of trips without making any trip
         that does not obey the weight limitation
-            
+
     Does not mutate the given dictionary of cows.
 
     Parameters:
     cows - a dictionary of name (string), weight (int) pairs
     limit - weight limit of the spaceship (an int)
-    
+
     Returns:
     A list of lists, with each inner list containing the names of cows
     transported on a particular trip and the overall list containing all the
@@ -82,7 +105,7 @@ def brute_force_cow_transport(cows,limit=10):
     """
     # TODO: Your code here
     pass
-        
+
 # Problem 4
 def compare_cow_transport_algorithms():
     """
@@ -90,7 +113,7 @@ def compare_cow_transport_algorithms():
     greedy_cow_transport and brute_force_cow_transport functions here. Use the
     default weight limits of 10 for both greedy_cow_transport and
     brute_force_cow_transport.
-    
+
     Print out the number of trips returned by each method, and how long each
     method takes to run in seconds.
 
