@@ -134,5 +134,21 @@ def compare_cow_transport_algorithms():
     Returns:
     Does not return anything.
     """
-    # TODO: Your code here
-    pass
+    cows = load_cows("ps1_cow_data.txt")
+
+    start = time.perf_counter()
+    greedy_trips = greedy_cow_transport(cows)
+    end = time.perf_counter()
+    exec_time = end - start
+    print("Greedy number of trips: ", len(greedy_trips))
+    print(f"Time: {exec_time:.6f} sec")
+
+    start = time.perf_counter()
+    brute_trips = brute_force_cow_transport(cows)
+    end = time.perf_counter()
+    exec_time = end - start
+    print("Brute force number of trips: ", len(brute_trips))
+    print(f"Time: {exec_time:.6f} sec")
+
+if __name__ == "__main__":
+    compare_cow_transport_algorithms()
