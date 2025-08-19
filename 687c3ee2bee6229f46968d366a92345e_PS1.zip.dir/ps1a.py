@@ -24,8 +24,13 @@ def load_cows(filename):
     Returns:
     a dictionary of cow name (string), weight (int) pairs
     """
-    # TODO: Your code here
-    pass
+    result = {}
+    with open(filename, 'r') as f:
+        for line in f.readlines():
+            name, weight = line.split(",")
+            result[name] = int(weight)
+
+    return result 
 
 # Problem 2
 def greedy_cow_transport(cows,limit=10):
