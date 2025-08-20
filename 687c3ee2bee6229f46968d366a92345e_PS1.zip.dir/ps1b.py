@@ -18,15 +18,14 @@ def generate_eggs(egg_weights, n):
 
 def helper(egg_weights, target_weight, solution, memo):
     if target_weight == 0:
-        return len(solution)
+        return 0
 
     if target_weight < 0 or len(egg_weights) == 0:
         return None
 
-    k = str((len(solution), target_weight)) 
+    k = str((egg_weights, target_weight)) 
     if k in memo.keys():
         return memo[k]
-
 
     w = egg_weights[0]
     egg_weights = egg_weights[1:]
@@ -36,15 +35,15 @@ def helper(egg_weights, target_weight, solution, memo):
 
     if s1 is not None and s2 is not None:
         if s1 < s2: 
-            memo[k] = s1
-            return s1
+            memo[k] = 1  + s1
+            return 1 + s1
         else: 
             memo[k] = s2
             return s2
 
     if s1 is not None: 
-        memo[k] = s1
-        return s1
+        memo[k] = 1 + s1
+        return 1 + s1
 
     if s2 is not None: 
         memo[k] = s2
@@ -68,7 +67,10 @@ def dp_make_weight(egg_weights, target_weight, memo = {}):
 
     eggs_values = [g for g in generate_eggs(egg_weights, target_weight)]
     
-    r= helper(eggs_values, target_weight, [], memo)
+    r = helper(eggs_values, target_weight, [], memo)
+
+    for k in memo.keys():
+        print(k, memo[k])
 
     return r 
 
