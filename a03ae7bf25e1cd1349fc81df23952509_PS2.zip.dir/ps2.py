@@ -42,13 +42,36 @@ def load_map(map_filename):
     Returns:
         a Digraph representing the map
     """
-
-    # TODO
     print("Loading map from file...")
+    graph = Digraph()
+    with open(map_filename, 'r') as f:
+        for line in f.readlines():
+            src, dest, dist, outside = line.split(' ')
+            if not graph.has_node(src):
+                graph.add_node(src)
+            if not graph.has_node(dest):
+                graph.add_node(dest)
+            edge = WeightedEdge(src, dest, dist, outside)
+            graph.add_edge(edge)
+
+    return graph
+
 
 # Problem 2c: Testing load_map
 # Include the lines used to test load_map below, but comment them out
 
+class LoadMapTest(unittest.TestCase):
+
+    def setUp(self):
+        self.graph = load_map("test_load_map.txt")
+
+    def test_load_map_my_custom_test(self):
+        self.assertEqual(len(self.graph.nodes), 3)
+        all_edges = []
+        for _, edges in self.graph.edges.items():
+            all_edges += edges  # edges must be dict of node -> list of edges
+        all_edges = set(all_edges)
+        self.assertEqual(len(all_edges), 3)
 
 #
 # Problem 3: Finding the Shorest Path using Optimized Search Method
