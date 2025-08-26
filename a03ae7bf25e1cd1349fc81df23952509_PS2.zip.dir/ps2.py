@@ -20,7 +20,7 @@ from graph import Digraph, Node, WeightedEdge
 # represented?
 #
 # Answer:
-#
+# Nodes places, edges routes between them, distances represented on edges.
 
 
 # Problem 2b: Implementing load_map
@@ -51,7 +51,7 @@ def load_map(map_filename):
                 graph.add_node(src)
             if not graph.has_node(dest):
                 graph.add_node(dest)
-            edge = WeightedEdge(src, dest, dist, outside)
+            edge = WeightedEdge(src, dest, int(dist), int(outside))
             graph.add_edge(edge)
 
     return graph
@@ -81,11 +81,10 @@ class LoadMapTest(unittest.TestCase):
 # What is the objective function for this problem? What are the constraints?
 #
 # Answer:
-#
+# Objective minimal route, constrains follow edges to get from a to b.
 
 # Problem 3b: Implement get_best_path
-def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
-                  best_path):
+def get_best_path(digraph, start, end, path, max_dist_outdoors):
     """
     Finds the shortest path between buildings subject to constraints.
 
@@ -118,8 +117,36 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist,
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then return None.
     """
-    # TODO
-    pass
+
+    if not digraph.has_node(start) or not digraph.has_node(end):
+        raise ValueError
+
+    if start in path:
+        return None, None
+    
+    if max_dist_outdoors < 0:
+        return None, None
+
+    if start == end:
+        return [start], 0
+
+    best_path = None
+    best_distance = None
+
+    for edge in digraph.get_edges_for_node(start):
+        destination = edge.get_destination()
+        distance = edge.get_total_distance()
+        outdoor = edge.get_outdoor_distance()
+        
+        best_sub_path, best_sub_distance = get_best_path(digraph, destination, end, path + [start], max_dist_outdoors - outdoor)
+        
+        if best_sub_distance is None: continue
+        v = distance + best_sub_distance
+        if best_distance is None or best_distance > v:
+            best_path = [start] + best_sub_path
+            best_distance = v
+
+    return best_path, best_distance
 
 
 # Problem 3c: Implement directed_dfs
@@ -151,10 +178,11 @@ def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then raises a ValueError.
     """
-    # TODO
-    pass
+    path, dist = get_best_path(digraph, start, end, [], max_dist_outdoors)
+    if dist is None or dist > max_total_dist:
+        raise ValueError
 
-
+    return path
 # ================================================================
 # Begin tests -- you do not need to modify anything below this line
 # ================================================================
@@ -178,13 +206,13 @@ class Ps2Test(unittest.TestCase):
         constraint = ""
         if outdoor_dist != Ps2Test.LARGE_DIST:
             constraint = "without walking more than {}m outdoors".format(
-                outdoor_dist)
+                    outdoor_dist)
         if total_dist != Ps2Test.LARGE_DIST:
             if constraint:
                 constraint += ' or {}m total'.format(total_dist)
             else:
                 constraint = "without walking more than {}m total".format(
-                    total_dist)
+                        total_dist)
 
         print("------------------------")
         print("Shortest path from Building {} to {} {}".format(
@@ -215,22 +243,22 @@ class Ps2Test(unittest.TestCase):
 
     def test_path_no_outdoors(self):
         self._test_path(
-            expectedPath=['32', '36', '26', '16', '56'], outdoor_dist=0)
+                expectedPath=['32', '36', '26', '16', '56'], outdoor_dist=0)
 
     def test_path_multi_step(self):
         self._test_path(expectedPath=['2', '3', '7', '9'])
 
     def test_path_multi_step_no_outdoors(self):
         self._test_path(
-            expectedPath=['2', '4', '10', '13', '9'], outdoor_dist=0)
+                expectedPath=['2', '4', '10', '13', '9'], outdoor_dist=0)
 
     def test_path_multi_step2(self):
         self._test_path(expectedPath=['1', '4', '12', '32'])
 
     def test_path_multi_step_no_outdoors2(self):
         self._test_path(
-            expectedPath=['1', '3', '10', '4', '12', '24', '34', '36', '32'],
-            outdoor_dist=0)
+                expectedPath=['1', '3', '10', '4', '12', '24', '34', '36', '32'],
+                outdoor_dist=0)
 
     def test_impossible_path1(self):
         self._test_impossible_path('8', '50', outdoor_dist=0)
