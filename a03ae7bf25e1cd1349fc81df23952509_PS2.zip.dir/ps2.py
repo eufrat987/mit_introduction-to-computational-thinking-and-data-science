@@ -84,7 +84,7 @@ class LoadMapTest(unittest.TestCase):
 # Objective minimal route, constrains follow edges to get from a to b.
 
 # Problem 3b: Implement get_best_path
-def get_best_path(digraph, start, end, path, max_dist_outdoors):
+def get_best_path(digraph, start, end, path, max_dist_outdoors, best_dist, best_path):
     """
     Finds the shortest path between buildings subject to constraints.
 
@@ -121,32 +121,31 @@ def get_best_path(digraph, start, end, path, max_dist_outdoors):
     if not digraph.has_node(start) or not digraph.has_node(end):
         raise ValueError
 
-    if start in path:
+    current_path, current_distance, current_outdoor = path
+
+    if start in current_path[:-1]:
         return None, None
-    
-    if max_dist_outdoors < 0:
+
+    if current_outdoor > max_dist_outdoors:
         return None, None
 
     if start == end:
-        return [start], 0
-
-    best_path = None
-    best_distance = None
+        if best_dist[0] is None or current_distance < best_dist[0]:
+            best_dist[0] = current_distance
+            best_path.clear()
+            best_path += current_path 
+        return None, None
 
     for edge in digraph.get_edges_for_node(start):
         destination = edge.get_destination()
         distance = edge.get_total_distance()
         outdoor = edge.get_outdoor_distance()
-        
-        best_sub_path, best_sub_distance = get_best_path(digraph, destination, end, path + [start], max_dist_outdoors - outdoor)
-        
-        if best_sub_distance is None: continue
-        v = distance + best_sub_distance
-        if best_distance is None or best_distance > v:
-            best_path = [start] + best_sub_path
-            best_distance = v
 
-    return best_path, best_distance
+        get_best_path(digraph, destination, end, 
+                      [current_path + [destination], current_distance + distance, current_outdoor + outdoor], 
+                      max_dist_outdoors, best_dist, best_path)
+
+    return best_path, best_dist 
 
 
 # Problem 3c: Implement directed_dfs
@@ -178,8 +177,8 @@ def directed_dfs(digraph, start, end, max_total_dist, max_dist_outdoors):
         If there exists no path that satisfies max_total_dist and
         max_dist_outdoors constraints, then raises a ValueError.
     """
-    path, dist = get_best_path(digraph, start, end, [], max_dist_outdoors)
-    if dist is None or dist > max_total_dist:
+    path, dist = get_best_path(digraph, start, end, [[start], 0, 0], max_dist_outdoors, [None], [])
+    if dist[0] is None or dist[0] > max_total_dist:
         raise ValueError
 
     return path
