@@ -242,7 +242,7 @@ class ps3_P2_ER(unittest.TestCase):
         for i in range(10):        
             width, height, dirt_amount = (random.randint(1,10), random.randint(1,10), 1)
             room_num_tiles = ps3.EmptyRoom(width, height, dirt_amount).get_num_tiles()
-            sol_room_tiles = ps3.EmptyRoom(width, height, dirt_amount).get_num_tiles()
+            sol_room_tiles = test.EmptyRoom(width, height, dirt_amount).get_num_tiles()
             self.assertEquals(room_num_tiles, sol_room_tiles,
                              "student code number of room tiles = {}, not equal to solution code num tiles {}".format(room_num_tiles, sol_room_tiles)
                              )
@@ -322,7 +322,7 @@ class ps3_P2_FR(unittest.TestCase):
             room = ps3.FurnishedRoom(width, height, dirt_amount)
             room.add_furniture_to_room()
             # instanciate solution's room based on student's furniture
-            sol_room = ps3.FurnishedRoom(width, height, dirt_amount)
+            sol_room = test.FurnishedRoom(width, height, dirt_amount)
             sol_room.furniture_tiles = room.furniture_tiles 
             # generate answers
             room_num_tiles = room.get_num_tiles()
@@ -340,7 +340,7 @@ class ps3_P2_FR(unittest.TestCase):
         room = ps3.FurnishedRoom(width, height, dirt_amount)
         room.add_furniture_to_room()
         # instanciate solution's room based on student's furniture
-        sol_room = ps3.FurnishedRoom(width, height, dirt_amount)
+        sol_room = test.FurnishedRoom(width, height, dirt_amount)
         sol_room.furniture_tiles = room.furniture_tiles 
         for i in range(50000):
             pos = room.get_random_position()
