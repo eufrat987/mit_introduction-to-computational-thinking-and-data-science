@@ -81,9 +81,9 @@ class RectangularRoom(object):
         height: an integer > 0
         dirt_amount: an integer >= 0
         """
-        self.width = width
-        self.height = height
-        self.tiles = [[dirt_amount for _ in range(height)] for _ in range(width)]
+        self.width = int(width)
+        self.height = int(height)
+        self.tiles = [[dirt_amount for _ in range(self.height)] for _ in range(self.width)]
     
     def clean_tile_at_position(self, pos, capacity):
         """
@@ -541,5 +541,5 @@ def show_plot_room_shape(title, x_label, y_label):
     pylab.show()
 
 
-#show_plot_compare_strategies('Time to clean 80% of a 20x20 room, for various numbers of robots','Number of robots','Time / steps')
+show_plot_compare_strategies('Time to clean 80% of a 20x20 room, for various numbers of robots','Number of robots','Time / steps')
 #show_plot_room_shape('Time to clean 80% of a 300-tile room for various room shapes','Aspect Ratio', 'Time / steps')
