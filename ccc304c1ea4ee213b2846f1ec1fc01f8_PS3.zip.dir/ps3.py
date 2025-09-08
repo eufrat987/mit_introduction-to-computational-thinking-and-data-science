@@ -83,7 +83,7 @@ class RectangularRoom(object):
         """
         self.width = width
         self.height = height
-        self.tiles = [[dirt_amount for x in range(height)] for y in range(width)]
+        self.tiles = [[dirt_amount for _ in range(height)] for _ in range(width)]
     
     def clean_tile_at_position(self, pos, capacity):
         """
@@ -100,7 +100,7 @@ class RectangularRoom(object):
         """
         xx = math.floor(pos.get_x())
         yy  = math.floor(pos.get_y())
-        self.tiles[xx][yy] = max(0,self.tiles[xx][yy] - capacity) 
+        self.tiles[xx][yy] = max(0, self.tiles[xx][yy] - capacity) 
 
     def is_tile_cleaned(self, m, n):
         """
@@ -259,7 +259,7 @@ class EmptyRoom(RectangularRoom):
         
         Returns: True if pos is in the room, False otherwise.
         """
-        return 0 <= (pos.get_x()) < self.width and 0 <= (pos.get_y()) < self.height
+        return self.is_position_in_room(pos) 
         
     def get_random_position(self):
         """
