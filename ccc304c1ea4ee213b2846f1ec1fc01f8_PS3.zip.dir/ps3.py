@@ -396,6 +396,10 @@ class FaultyRobot(Robot):
     """
     p = 0.15
 
+    def __init__(self, room, speed, capacity):
+        super(FaultyRobot, self).__init__(room, speed, capacity)
+        self.standard_robot = StandardRobot(room, speed, capacity)
+
     @staticmethod
     def set_faulty_probability(prob):
         """
@@ -433,15 +437,7 @@ class FaultyRobot(Robot):
 
             self.set_robot_position(new_pos)
         else:
-
-            new_pos = self.position.get_new_position(self.direction, self.speed)
-            while not self.room.is_position_valid(new_pos):
-                self.direction = random.random() * 360 
-                new_pos = self.position.get_new_position(self.direction, self.speed)
-
-            self.room.clean_tile_at_position(new_pos, self.capacity)
-            self.set_robot_position(new_pos)
-
+            self.standard_robot.update_position_and_clean()            
 
 #test_robot_movement(FaultyRobot, EmptyRoom)
 
