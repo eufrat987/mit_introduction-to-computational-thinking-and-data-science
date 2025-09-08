@@ -397,7 +397,7 @@ class FaultyRobot(Robot):
     p = 0.15
 
     def __init__(self, room, speed, capacity):
-        super(FaultyRobot, self).__init__(room, speed, capacity)
+        super(FaultyRobot, self).__init__( room, speed, capacity)
         self.standard_robot = StandardRobot(room, speed, capacity)
 
     @staticmethod
@@ -430,12 +430,7 @@ class FaultyRobot(Robot):
         move there if it can, pick a new direction and stay stationary if it can't)
         """
         if self.gets_faulty():
-            new_pos = self.position.get_new_position(self.direction, self.speed)
-            while not self.room.is_position_valid(new_pos):
-                self.direction = random.random() * 360 
-                new_pos = self.position.get_new_position(self.direction, self.speed)
-
-            self.set_robot_position(new_pos)
+            self.direction = random.random() * 360 
         else:
             self.standard_robot.update_position_and_clean()            
 
