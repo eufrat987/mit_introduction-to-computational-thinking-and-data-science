@@ -5,8 +5,12 @@
 
 import math
 import numpy as np
-import pylab as pl
+import matplotlib as pl
 import random
+
+from pylab import rand
+
+from typing import List
 
 
 ##########################
@@ -88,7 +92,11 @@ class SimpleBacteria(object):
                 probability
             death_prob (float in [0, 1]): Maximum death probability
         """
-        pass  # TODO
+        assert type(birth_prob) is float
+        assert type(death_prob) is float
+
+        self.birth_prob = birth_prob
+        self.death_prob = death_prob
 
     def is_killed(self):
         """
@@ -99,7 +107,7 @@ class SimpleBacteria(object):
         Returns:
             bool: True with probability self.death_prob, False otherwise.
         """
-        pass  # TODO
+        return random.random() < self.death_prob
 
     def reproduce(self, pop_density):
         """
@@ -127,7 +135,9 @@ class SimpleBacteria(object):
         Raises:
             NoChildException if this bacteria cell does not reproduce.
         """
-        pass  # TODO
+        assert type(pop_density) is float
+
+        return random.random() < self.birth_prob * (1 - pop_density)
 
 
 class Patient(object):
@@ -142,7 +152,13 @@ class Patient(object):
             max_pop (int): Maximum possible bacteria population size for
                 this patient
         """
-        pass  # TODO
+
+        assert type(bacteria) is List[SimpleBacteria]
+        #assert all(type(x) is SimpleBacteria for x in bacteria)
+        assert type(max_pop) is int
+
+        self.bacteria = bacteria
+        self.max_pop = max_pop
 
     def get_total_pop(self):
         """
@@ -151,7 +167,7 @@ class Patient(object):
         Returns:
             int: The total bacteria population
         """
-        pass  # TODO
+        return len(self.bacteria)
 
     def update(self):
         """
@@ -177,7 +193,26 @@ class Patient(object):
         Returns:
             int: The total bacteria population at the end of the update
         """
-        pass  # TODO
+
+        # Move survivors to new list
+        survivors = []
+
+        while len(self.bacteria) > 0:
+            b = self.bacteria.pop()
+            killed = b.is_killed()
+            if not killed:
+                survivors.append(b)
+
+        # Reproduction of survivors
+        pop_density = len(survivors) / self.max_pop
+        for b in survivors:
+            birth = b.reproduce(pop_density)
+            if birth:
+                self.bacteria.append(SimpleBacteria(b.birth_prob, b.death_prob))
+
+        self.bacteria += survivors
+
+        return len(self.bacteria)
 
 
 ##########################
@@ -195,7 +230,14 @@ def calc_pop_avg(populations, n):
     Returns:
         float: The average bacteria population size at time step n
     """
-    pass  # TODO
+    assert type(populations) is List[List[float]]
+    assert type(n) is int
+
+    sum = 0.0
+    for i, _ in enumerate(populations):
+        sum += populations[i][n]
+
+    return sum / len(populations) 
 
 
 def simulation_without_antibiotic(num_bacteria,
