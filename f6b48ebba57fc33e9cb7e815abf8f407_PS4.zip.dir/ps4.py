@@ -239,7 +239,8 @@ def calc_pop_avg(populations, n):
     Returns:
         float: The average bacteria population size at time step n
     """
-    assert type(populations) is List[List[float]]
+
+    assert isinstance(populations, list) and all(isinstance(row, list) for row in populations)
     assert type(n) is int
 
     sum = 0.0
@@ -334,13 +335,13 @@ def calc_pop_std(populations, t):
              a specific time step
     """
     avg = calc_pop_avg(populations, t)
-    std = 0
+    std = 0.0
 
-
-    sum = 0.0
     for i, _ in enumerate(populations):
         p = populations[i][t]
         std += (avg - p)**2
+
+    std /= len(populations)
 
     return std**0.5
 
